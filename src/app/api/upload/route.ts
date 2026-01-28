@@ -1,6 +1,6 @@
 import { getCloudflareEnv } from '@/lib/cloudflare/context';
 import { uploadImage } from '@/lib/cloudflare/r2';
-import { getCurrentUser } from '@/lib/supabase/server';
+import { getCurrentUserFromRequest } from '@/lib/supabase/server';
 import { corsResponse, jsonWithCors } from '@/lib/cors';
 
 export const runtime = 'edge';
@@ -15,8 +15,8 @@ export async function OPTIONS(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    // Check authentication
-    const user = await getCurrentUser();
+    // Check authentication (supports both cookies and Authorization header)
+    const user = await getCurrentUserFromRequest(request);
 
     if (!user || !user.githubUsername) {
       return jsonWithCors(request, { error: 'Unauthorized' }, { status: 401 });

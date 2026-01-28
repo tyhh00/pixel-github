@@ -1,6 +1,6 @@
 import { getCloudflareEnv } from '@/lib/cloudflare/context';
 import { saveWorldConfig, ensureUser } from '@/lib/cloudflare/d1';
-import { getCurrentUser } from '@/lib/supabase/server';
+import { getCurrentUserFromRequest } from '@/lib/supabase/server';
 import { corsResponse, jsonWithCors } from '@/lib/cors';
 import type { UserWorldConfig } from '@/types/editor';
 
@@ -13,8 +13,8 @@ export async function OPTIONS(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    // Check authentication
-    const user = await getCurrentUser();
+    // Check authentication (supports both cookies and Authorization header)
+    const user = await getCurrentUserFromRequest(request);
 
     if (!user || !user.githubUsername) {
       return jsonWithCors(request, { error: 'Unauthorized' }, { status: 401 });

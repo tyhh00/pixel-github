@@ -5,14 +5,16 @@ const ALLOWED_ORIGINS = [
   'https://pixel-github.pages.dev',
 ];
 
-export function getCorsHeaders(request: Request): HeadersInit {
+export function getCorsHeaders(request: Request): HeadersInit | null {
   const origin = request.headers.get('origin') || '';
 
-  // Check if origin is allowed
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  // Only allow whitelisted origins
+  if (!ALLOWED_ORIGINS.includes(origin)) {
+    return null;
+  }
 
   return {
-    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Credentials': 'true',
@@ -21,9 +23,16 @@ export function getCorsHeaders(request: Request): HeadersInit {
 }
 
 export function corsResponse(request: Request): Response {
+  const corsHeaders = getCorsHeaders(request);
+
+  // Reject disallowed origins
+  if (!corsHeaders) {
+    return new Response('Forbidden', { status: 403 });
+  }
+
   return new Response(null, {
     status: 204,
-    headers: getCorsHeaders(request),
+    headers: corsHeaders,
   });
 }
 
@@ -35,9 +44,12 @@ export function jsonWithCors(
   const headers = new Headers(init?.headers);
   const corsHeaders = getCorsHeaders(request);
 
-  Object.entries(corsHeaders).forEach(([key, value]) => {
-    headers.set(key, value);
-  });
+  // Add CORS headers only for allowed origins
+  if (corsHeaders) {
+    Object.entries(corsHeaders).forEach(([key, value]) => {
+      headers.set(key, value);
+    });
+  }
   headers.set('Content-Type', 'application/json');
 
   return new Response(JSON.stringify(data), {
