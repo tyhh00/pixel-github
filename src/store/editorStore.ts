@@ -219,7 +219,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     newHistory.push({
       slots: JSON.parse(JSON.stringify(slots)),
       textElements: JSON.parse(JSON.stringify(textElements)),
-      backgroundImagePath,
+      backgroundImagePath: backgroundImagePath ?? undefined,
     });
 
     // Keep max 50 history entries

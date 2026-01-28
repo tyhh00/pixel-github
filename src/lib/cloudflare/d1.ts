@@ -2,33 +2,8 @@
 // Note: In local development, use wrangler's D1 binding
 // In production, bindings are available via getRequestContext()
 
-import type { UserWorldConfig, CustomSlotPosition, CustomTextElement } from '@/types/editor';
-
-// Type for D1 Database (from Cloudflare Workers types)
-interface D1Database {
-  prepare(query: string): D1PreparedStatement;
-  batch<T = unknown>(statements: D1PreparedStatement[]): Promise<D1Result<T>[]>;
-  exec(query: string): Promise<D1ExecResult>;
-}
-
-interface D1PreparedStatement {
-  bind(...values: unknown[]): D1PreparedStatement;
-  first<T = unknown>(colName?: string): Promise<T | null>;
-  all<T = unknown>(): Promise<D1Result<T>>;
-  raw<T = unknown[]>(): Promise<T[]>;
-  run(): Promise<D1Result>;
-}
-
-interface D1Result<T = unknown> {
-  results: T[];
-  success: boolean;
-  meta: object;
-}
-
-interface D1ExecResult {
-  count: number;
-  duration: number;
-}
+import type { UserWorldConfig, CustomTextElement } from '@/types/editor';
+import type { D1Database } from './context';
 
 // Get world config for a username
 export async function getWorldConfig(

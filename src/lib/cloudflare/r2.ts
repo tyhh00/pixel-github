@@ -1,49 +1,6 @@
 // R2 Storage helpers for Cloudflare Workers
 
-// Type for R2 Bucket (from Cloudflare Workers types)
-interface R2Bucket {
-  put(key: string, value: ReadableStream | ArrayBuffer | string, options?: R2PutOptions): Promise<R2Object | null>;
-  get(key: string): Promise<R2ObjectBody | null>;
-  delete(key: string): Promise<void>;
-  list(options?: R2ListOptions): Promise<R2Objects>;
-  head(key: string): Promise<R2Object | null>;
-}
-
-interface R2PutOptions {
-  httpMetadata?: {
-    contentType?: string;
-    cacheControl?: string;
-  };
-  customMetadata?: Record<string, string>;
-}
-
-interface R2Object {
-  key: string;
-  size: number;
-  etag: string;
-  httpMetadata?: {
-    contentType?: string;
-  };
-}
-
-interface R2ObjectBody extends R2Object {
-  body: ReadableStream;
-  arrayBuffer(): Promise<ArrayBuffer>;
-  text(): Promise<string>;
-  json<T>(): Promise<T>;
-}
-
-interface R2ListOptions {
-  prefix?: string;
-  limit?: number;
-  cursor?: string;
-}
-
-interface R2Objects {
-  objects: R2Object[];
-  truncated: boolean;
-  cursor?: string;
-}
+import type { R2Bucket, R2Object } from './context';
 
 // Allowed image types
 const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];

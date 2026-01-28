@@ -21,6 +21,7 @@ import {
 import { useEditorStore } from '@/store/editorStore';
 import { useGameStore } from '@/store/gameStore';
 import type { UserWorldConfig } from '@/types/editor';
+import type { ThemeColors } from '@/config/themes';
 
 interface WorldEditorProps {
   username: string;
@@ -448,7 +449,7 @@ function ToolButton({
   isActive?: boolean;
   onClick: () => void;
   disabled?: boolean;
-  colors: Record<string, string>;
+  colors: ThemeColors;
 }) {
   return (
     <button
@@ -478,7 +479,7 @@ function DraggableSlot({
   isSelected: boolean;
   onSelect: () => void;
   onUpdate: (updates: Partial<typeof slot>) => void;
-  colors: Record<string, string>;
+  colors: ThemeColors;
 }) {
   const handleDrag = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -550,7 +551,7 @@ function DraggableText({
   isSelected: boolean;
   onSelect: () => void;
   onUpdate: (updates: Partial<typeof element>) => void;
-  colors: Record<string, string>;
+  colors: ThemeColors;
 }) {
   const handleDrag = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -618,7 +619,7 @@ function SlotProperties({
   slot: ReturnType<typeof useEditorStore.getState>['slots'][0];
   onUpdate: (updates: Partial<typeof slot>) => void;
   onDelete: () => void;
-  colors: Record<string, string>;
+  colors: ThemeColors;
 }) {
   return (
     <div className="space-y-4">
@@ -702,7 +703,7 @@ function TextProperties({
   element: ReturnType<typeof useEditorStore.getState>['textElements'][0];
   onUpdate: (updates: Partial<typeof element>) => void;
   onDelete: () => void;
-  colors: Record<string, string>;
+  colors: ThemeColors;
 }) {
   return (
     <div className="space-y-4">
