@@ -8,7 +8,8 @@
       "Bash(findstr:*)",
       "Bash(taskkill /PID 6228 /F)",
       "Bash(cmd //c \"taskkill /PID 6228 /F\")",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(npm run typecheck:*)"
     ]
   }
 }

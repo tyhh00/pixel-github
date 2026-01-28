@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser, isProfileOwner } from '@/lib/supabase/server';
 import { WorldEditor } from '@/components/Editor/WorldEditor';
 
+export const runtime = 'edge';
+
 interface EditorPageProps {
   params: Promise<{ username: string }>;
 }

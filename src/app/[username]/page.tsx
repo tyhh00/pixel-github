@@ -3,6 +3,8 @@ import { fetchGitHubProfile } from '@/services/github';
 import { GameWrapper } from '@/components/Game/GameWrapper';
 import { isProfileOwner } from '@/lib/supabase/server';
 
+export const runtime = 'edge';
+
 interface PageProps {
   params: Promise<{ username: string }>;
 }
