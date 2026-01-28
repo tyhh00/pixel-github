@@ -3,6 +3,8 @@
 ## Project Overview
 A 2D pixel art environment for exploring GitHub profiles, built with Next.js 16, Phaser 3, and deployed to Cloudflare Pages.
 
+**Production URL**: https://pixel-github.pages.dev
+
 ## Tech Stack
 - **Frontend**: Next.js 16, React 19, Phaser 3, Zustand, Tailwind CSS, Framer Motion
 - **Backend**: Cloudflare Workers (via @cloudflare/next-on-pages)
@@ -46,7 +48,31 @@ This runs automatically before build via the `prebuild` script, but always verif
 - Never commit `.env`, `.env.local`, or `.dev.vars` files
 - Reference `.env.example` for required variables
 
-### 5. Database Migrations
+Key variables:
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
+- `NEXT_PUBLIC_APP_URL` - App URL for OAuth redirects
+- `NEXT_PUBLIC_API_URL` - API URL for D1/R2 routes (see below)
+
+### 5. Local Development with Production D1
+D1 bindings are not available in local Next.js dev mode. Use `NEXT_PUBLIC_API_URL` to point D1/R2 API calls to production:
+
+```bash
+# In .env for local development
+NEXT_PUBLIC_API_URL=https://pixel-github.pages.dev
+```
+
+In production, leave this empty or unset (uses relative URLs).
+
+Use `getApiUrl()` from `src/lib/api.ts` for D1-dependent API calls:
+```typescript
+import { getApiUrl } from '@/lib/api';
+
+// This will hit production in local dev, relative URL in production
+fetch(getApiUrl('/api/world/save'), { ... });
+```
+
+### 6. Database Migrations
 D1 migrations are in `migrations/` folder. Run with:
 
 ```bash

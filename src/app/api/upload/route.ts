@@ -1,12 +1,17 @@
-import { NextResponse } from 'next/server';
 import { getCloudflareEnv } from '@/lib/cloudflare/context';
 import { uploadImage } from '@/lib/cloudflare/r2';
 import { getCurrentUser } from '@/lib/supabase/server';
+import { corsResponse, jsonWithCors } from '@/lib/cors';
 
 export const runtime = 'edge';
 
 // Max file size: 5MB
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+// Handle CORS preflight
+export async function OPTIONS(request: Request) {
+  return corsResponse(request);
+}
 
 export async function POST(request: Request) {
   try {
@@ -14,7 +19,7 @@ export async function POST(request: Request) {
     const user = await getCurrentUser();
 
     if (!user || !user.githubUsername) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return jsonWithCors(request, { error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse form data
@@ -23,12 +28,13 @@ export async function POST(request: Request) {
     const type = (formData.get('type') as string) || 'background';
 
     if (!file) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+      return jsonWithCors(request, { error: 'No file provided' }, { status: 400 });
     }
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      return NextResponse.json(
+      return jsonWithCors(
+        request,
         { error: 'Invalid file type. Only images are allowed.' },
         { status: 400 }
       );
@@ -36,7 +42,8 @@ export async function POST(request: Request) {
 
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json(
+      return jsonWithCors(
+        request,
         { error: `File too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB.` },
         { status: 400 }
       );
@@ -45,7 +52,8 @@ export async function POST(request: Request) {
     const env = getCloudflareEnv();
 
     if (!env) {
-      return NextResponse.json(
+      return jsonWithCors(
+        request,
         { error: 'R2 not available' },
         { status: 503 }
       );
@@ -59,14 +67,15 @@ export async function POST(request: Request) {
       type as 'background' | 'asset'
     );
 
-    return NextResponse.json({
+    return jsonWithCors(request, {
       success: true,
       path: result.path,
       url: result.url,
     });
   } catch (error) {
     console.error('Error uploading file:', error);
-    return NextResponse.json(
+    return jsonWithCors(
+      request,
       { error: error instanceof Error ? error.message : 'Failed to upload file' },
       { status: 500 }
     );

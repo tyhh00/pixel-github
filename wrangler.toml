@@ -19,7 +19,7 @@ bucket_name = "pixel-github-uploads"
 # These will be overridden by Cloudflare Pages environment variables in dashboard
 [vars]
 R2_PUBLIC_URL = "https://pub-YOUR_R2_PUBLIC_BUCKET.r2.dev"
-NEXT_PUBLIC_APP_URL = "https://your-production-domain.com"
+NEXT_PUBLIC_APP_URL = "https://pixel-github.pages.dev"
 
 # For local development with wrangler pages dev
 [env.preview]
@@ -32,16 +32,16 @@ name = "pixel-github-preview"
 # 1. Cloudflare Pages Environment Variables (set in dashboard):
 #    - NEXT_PUBLIC_SUPABASE_URL
 #    - NEXT_PUBLIC_SUPABASE_ANON_KEY
-#    - NEXT_PUBLIC_APP_URL (your production URL, e.g., https://pixel.github.io)
+#    - NEXT_PUBLIC_APP_URL = https://pixel-github.pages.dev
 #    - R2_PUBLIC_URL (your R2 public bucket URL)
 #
 # 2. Supabase Dashboard:
 #    - Add production URL to Authentication > URL Configuration > Redirect URLs
-#    - Example: https://your-domain.com/api/auth/callback
+#    - Add: https://pixel-github.pages.dev/api/auth/callback
 #
 # 3. GitHub OAuth App:
-#    - Update Homepage URL to production URL
-#    - Callback URL stays as Supabase: https://xxx.supabase.co/auth/v1/callback
+#    - Update Homepage URL to: https://pixel-github.pages.dev
+#    - Callback URL stays as Supabase: https://vlspqvsnisxxzivgzstq.supabase.co/auth/v1/callback
 #
 # 4. R2 Bucket:
 #    - Enable public access in Cloudflare dashboard, or

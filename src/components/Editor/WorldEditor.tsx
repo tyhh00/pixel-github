@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useEditorStore } from '@/store/editorStore';
 import { useGameStore } from '@/store/gameStore';
+import { getApiUrl } from '@/lib/api';
 import type { UserWorldConfig } from '@/types/editor';
 import type { ThemeColors } from '@/config/themes';
 
@@ -69,7 +70,7 @@ export function WorldEditor({ username }: WorldEditorProps) {
   useEffect(() => {
     async function loadConfig() {
       try {
-        const res = await fetch(`/api/world/${username}`);
+        const res = await fetch(getApiUrl(`/api/world/${username}`));
         const data = await res.json();
         loadWorldConfig(data.customWorld as UserWorldConfig | null, username);
       } catch (error) {
@@ -88,7 +89,7 @@ export function WorldEditor({ username }: WorldEditorProps) {
 
     try {
       const config = exportConfig();
-      const res = await fetch('/api/world/save', {
+      const res = await fetch(getApiUrl('/api/world/save'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -124,7 +125,7 @@ export function WorldEditor({ username }: WorldEditorProps) {
     formData.append('type', 'background');
 
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch(getApiUrl('/api/upload'), {
         method: 'POST',
         body: formData,
       });
