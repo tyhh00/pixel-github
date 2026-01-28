@@ -1,6 +1,8 @@
 // Cloudflare context helper for accessing D1 and R2 bindings
 // Works with @opennextjs/cloudflare
 
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+
 // ============================================
 // D1 Database Types
 // ============================================
@@ -82,24 +84,29 @@ export interface R2Objects {
 // Environment Bindings
 // ============================================
 
-export interface CloudflareEnv {
+export interface AppCloudflareEnv {
   DB: D1Database;
   R2_BUCKET: R2Bucket;
+  [key: string]: unknown;
 }
 
 // Get Cloudflare context in API routes
-// Uses process.env for local development, actual bindings in production
-export function getCloudflareEnv(): CloudflareEnv | null {
-  // In Cloudflare Workers, bindings are available on globalThis
-  const env = (globalThis as unknown as { env?: CloudflareEnv }).env;
+// Uses @opennextjs/cloudflare's getCloudflareContext for proper binding access
+export function getCloudflareEnv(): AppCloudflareEnv | null {
+  try {
+    const ctx = getCloudflareContext();
+    const env = ctx.env as unknown as AppCloudflareEnv;
 
-  if (env?.DB && env?.R2_BUCKET) {
-    return env;
+    if (env?.DB && env?.R2_BUCKET) {
+      return env;
+    }
+
+    return null;
+  } catch {
+    // In local development without proper setup, return null
+    // API routes should handle this gracefully
+    return null;
   }
-
-  // In local development without wrangler, return null
-  // API routes should handle this gracefully
-  return null;
 }
 
 // Check if we're running in Cloudflare Workers environment
