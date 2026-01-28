@@ -212,23 +212,47 @@ remote = true  # Connect to remote D1 during local dev
 
 Then run:
 ```bash
-npx @opennextjs/cloudflare dev
+npx @opennextjs/cloudflare build dev
 ```
+
+## Build Configuration
+
+### package.json
+
+The build script MUST run `@opennextjs/cloudflare`, not `next build`:
+
+```json
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "npx @opennextjs/cloudflare build",
+    "typecheck": "tsc --noEmit",
+    "prebuild": "npm run typecheck"
+  }
+}
+```
+
+**Why?** `@opennextjs/cloudflare`:
+1. Runs `next build` internally
+2. Transforms the output for Cloudflare Workers
+3. Creates the `.open-next` directory that `pages_build_output_dir` points to
+
+If you use `next build` directly, the `.open-next` directory won't exist and deployment will fail with "Output directory not found".
 
 ## Deployment
 
 ### Via Git Integration (Recommended)
 
 1. Connect your GitHub repo to Cloudflare Pages
-2. Set build command: `npx @opennextjs/cloudflare`
-3. Set build output directory: `.open-next`
+2. Set build command: `npm run build` (which runs `npx @opennextjs/cloudflare build`)
+3. Build output directory is read from `wrangler.toml` (`pages_build_output_dir`)
 4. Bindings are automatically configured from `wrangler.toml`
 
 ### Via Wrangler CLI
 
 ```bash
 # Build
-npx @opennextjs/cloudflare
+npm run build
 
 # Deploy
 wrangler pages deploy .open-next
