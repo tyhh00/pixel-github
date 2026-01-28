@@ -10,7 +10,8 @@
       "Bash(cmd //c \"taskkill /PID 6228 /F\")",
       "Bash(dir:*)",
       "Bash(npm run typecheck:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(npm run build:*)"
     ]
   }
 }
