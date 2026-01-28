@@ -1,0 +1,51 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "pixel-github"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database - Run: wrangler d1 create pixel-github-db
+# Then update the database_id below
+[[d1_databases]]
+binding = "DB"
+database_name = "pixel-github-db"
+database_id = "60d78319-5fed-4752-ab34-443503b39647"
+
+# R2 Bucket - Run: wrangler r2 bucket create pixel-github-uploads
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "pixel-github-uploads"
+
+# Environment variables (non-sensitive)
+# These will be overridden by Cloudflare Pages environment variables in dashboard
+[vars]
+R2_PUBLIC_URL = "https://pub-YOUR_R2_PUBLIC_BUCKET.r2.dev"
+NEXT_PUBLIC_APP_URL = "https://your-production-domain.com"
+
+# For local development with wrangler pages dev
+[env.preview]
+name = "pixel-github-preview"
+
+# ===========================================
+# PRODUCTION SETUP CHECKLIST
+# ===========================================
+#
+# 1. Cloudflare Pages Environment Variables (set in dashboard):
+#    - NEXT_PUBLIC_SUPABASE_URL
+#    - NEXT_PUBLIC_SUPABASE_ANON_KEY
+#    - NEXT_PUBLIC_APP_URL (your production URL, e.g., https://pixel.github.io)
+#    - R2_PUBLIC_URL (your R2 public bucket URL)
+#
+# 2. Supabase Dashboard:
+#    - Add production URL to Authentication > URL Configuration > Redirect URLs
+#    - Example: https://your-domain.com/api/auth/callback
+#
+# 3. GitHub OAuth App:
+#    - Update Homepage URL to production URL
+#    - Callback URL stays as Supabase: https://xxx.supabase.co/auth/v1/callback
+#
+# 4. R2 Bucket:
+#    - Enable public access in Cloudflare dashboard, or
+#    - Set up a custom domain for the R2 bucket
+#
+# 5. D1 Database:
+#    - Run migrations: wrangler d1 execute pixel-github-db --remote --file=migrations/0001_initial_schema.sql
